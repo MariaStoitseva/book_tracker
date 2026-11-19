@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}
+    My Books
+{% endblock %}
+
+{% block content %}
+
+    <h1>My Books</h1>
+
+    <form method="get">
+        <input
+            type="text"
+            name="search"
+            placeholder="Search by title or author"
+            value="{{ request.GET.search }}"
+        >
+
+        <select name="status">
+            <option value="">All statuses</option>
+
+            <option value="to_read"
+                {% if request.GET.status == "to_read" %}selected{% endif %}>
+                To Read
+            </option>
+
+            <option value="reading"
+                {% if request.GET.status == "reading" %}selected{% endif %}>
+                Reading
+            </option>
+
+            <option value="read"
+                {% if request.GET.status == "read" %}selected{% endif %}>
+                Read
+            </option>
+        </select>
+
+        <button type="submit">Search</button>
+    </form>
+
+    <hr>
+
+    {% for book in books %}
+
+        <h2>{{ book.title }}</h2>
+
+        <p>
+            <strong>Author:</strong>
+            {{ book.author }}
+        </p>
+
+        <p>
+            <strong>Genre:</strong>
+            {{ book.genre }}
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            {{ book.get_status_display }}
+        </p>
+
+        {% if book.rating %}
+            <p>
+                <strong>Rating:</strong>
+                {{ book.rating }}/5
+            </p>
+        {% else %}
+            <p>
+                <strong>Rating:</strong>
+                Not rated
+            </p>
+        {% endif %}
+
+        {% if book.notes %}
+            <p>
+                <strong>Notes:</strong>
+                {{ book.notes }}
+            </p>
+        {% endif %}
+
+        <a href="{% url 'book-edit' book.pk %}">Edit</a>
+
+        <a href="{% url 'book-delete' book.pk %}">Delete</a>
+
+        <hr>
+
+    {% empty %}
+
+        <p>No books found.</p>
+
+    {% endfor %}
+
+{% endblock %}
